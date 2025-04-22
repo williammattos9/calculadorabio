@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Bioimpedância</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #1C2526;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill-rule="evenodd"%3E%3Ccircle fill="rgba(255,255,255,0.05)" cx="50" cy="50" r="50"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: 100px;
+            color: #FFFFFF;
+        }
+        .calculator {
+            background: rgba(15, 20, 25, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #2E2E2E;
+        }
+        h1 {
+            font-size: 1.5em;
+            color: #FFFFFF;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #FFFFFF;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #2E2E2E;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background: #1C2526;
+            color: #FFFFFF;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        button {
+            background-color: #2E7D32;
+            color: #FFFFFF;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #4CAF50;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #FFFFFF;
+        }
+        #result p {
+            margin: 5px 0;
+        }
+        .highlight {
+            color: #00FF00;
+        }
+        .error {
+            color: #FF4444;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .warning {
+            font-size: 0.9em;
+            color: #BBBBBB;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #BBBBBB;
+            text-align: center;
+        }
+        @media (max-width: 500px) {
+            .calculator {
+                margin: 10px;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Calculadora de Bioimpedância</h1>
+        <form id="bioForm">
+            <label for="age">Idade (anos):</label>
+            <input type="number" id="age" min="1" max="120" required>
+            
+            <label for="sex">Sexo:</label>
+            <select id="sex" required>
+                <option value="" disabled selected>Selecione</option>
+                <option value="male">Masculino</option>
+                <option value="female">Feminino</option>
+            </select>
+            
+            <label for="weight">Peso (kg):</label>
+            <input type="number" id="weight" min="30" max="300" step="0.1" required>
+            
+            <label for="height">Altura (cm):</label>
+            <select id="height" required>
+                <option value="" disabled selected>Selecione</option>
+                <option value="100">100</option>
+                <option value="105">105</option>
+                <option value="110">110</option>
+                <option value="115">115</option>
+                <option value="120">120</option>
+                <option value="125">125</option>
+                <option value="130">130</option>
+                <option value="135">135</option>
+                <option value="140">140</option>
+                <option value="145">145</option>
+                <option value="150">150</option>
+                <option value="155">155</option>
+                <option value="160">160</option>
+                <option value="165">165</option>
+                <option value="170">170</option>
+                <option value="175">175</option>
+                <option value="180">180</option>
+                <option value="185">185</option>
+                <option value="190">190</option>
+                <option value="195">195</option>
+                <option value="200">200</option>
+                <option value="205">205</option>
+                <option value="210">210</option>
+                <option value="215">215</option>
+                <option value="220">220</option>
+                <option value="225">225</option>
+                <option value="230">230</option>
+                <option value="235">235</option>
+                <option value="240">240</option>
+                <option value="245">245</option>
+                <option value="250">250</option>
+            </select>
+            
+            <button type="submit">Calcular</button>
+        </form>
+        <div id="result"></div>
+        <div class="warning">
+            Nota: Esta é uma estimativa baseada em fórmulas antropométricas e IMC. Para resultados precisos, use um aparelho de bioimpedância profissional e consulte um especialista.
+        </div>
+        <div class="footer">
+            Desenvolvido por @MAGnphik Design Studio
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('bioForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Obter valores do formulário
+            const age = parseInt(document.getElementById('age').value);
+            const sex = document.getElementById('sex').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value) / 100; // Converter cm para metros
+            
+            // Validação dos dados
+            if (weight < 30 || weight > 300) {
+                document.getElementById('result').innerHTML = 
+                    '<p class="error">Erro: Peso deve estar entre 30 e 300 kg.</p>';
+                return;
+            }
+            if (height < 1.0 || height > 2.5) {
+                document.getElementById('result').innerHTML = 
+                    '<p class="error">Erro: Altura deve estar entre 100 e 250 cm.</p>';
+                return;
+            }
+            if (age < 1 || age > 120) {
+                document.getElementById('result').innerHTML = 
+                    '<p class="error">Erro: Idade deve estar entre 1 e 120 anos.</p>';
+                return;
+            }
+            
+            // Calcular IMC
+            const bmi = weight / (height * height);
+            
+            // Classificação do IMC segundo a OMS
+            let bmiClassification;
+            if (bmi < 18.5) {
+                bmiClassification = "Abaixo do peso";
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                bmiClassification = "Peso normal";
+            } else if (bmi >= 25.0 && bmi <= 29.9) {
+                bmiClassification = "Sobrepeso";
+            } else if (bmi >= 30.0 && bmi <= 34.9) {
+                bmiClassification = "Obesidade Grau I";
+            } else if (bmi >= 35.0 && bmi <= 39.9) {
+                bmiClassification = "Obesidade Grau II";
+            } else {
+                bmiClassification = "Obesidade Grau III";
+            }
+            
+            // Fórmula de Deurenberg para percentual de gordura
+            let bodyFat;
+            if (sex === 'male') {
+                bodyFat = 1.20 * bmi + 0.23 * age - 16.2;
+            } else {
+                bodyFat = 1.20 * bmi + 0.23 * age - 5.4;
+            }
+            
+            // Garantir que o percentual de gordura seja positivo
+            bodyFat = bodyFat > 0 ? bodyFat : 0;
+            
+            // Exibir resultados
+            document.getElementById('result').innerHTML = `
+                <p>IMC: <span class="highlight">${bmi.toFixed(1)}</span></p>
+                <p>Classificação OMS: <span class="highlight">${bmiClassification}</span></p>
+                <p>Percentual de Gordura Estimado: <span class="highlight">${bodyFat.toFixed(1)}%</span></p>
+            `;
+        });
+    </script>
+</body>
+</html>
